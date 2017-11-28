@@ -1,0 +1,47 @@
+
+<div class="container">
+  <div class="jumbotron">
+    <h1>Metrics</h1>
+    <h2>Converter</h2>
+  </div>
+
+  <div class="panel panel-primary">
+      <div class="panel-heading">Metrics</div>
+      <div class="panel-body">
+         
+          <form class="example-form">
+              <div class="row">
+                  <div class="col-md-6">
+                      <mat-form-field class="example-full-width">
+                          <input matInput placeholder="Enter from metrics" aria-label="From metric" [matAutocomplete]="auto" [formControl]="fromCtrl">
+
+                      </mat-form-field> 
+                          <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let metric of filteredFrom | async" [value]="metric.name">
+                              <span (click) = "onSelectFrom(metric)">{{ metric.name }}</span>
+                            </mat-option>
+                          </mat-autocomplete> 
+                  </div>
+                  
+                  <div class="col-md-6">
+                      <mat-form-field class="example-full-width">
+                          <input matInput placeholder="Enter to metrics" aria-label="From metric" [matAutocomplete]="auto1" [formControl]="toCtrl">
+                      </mat-form-field>
+                          <mat-autocomplete #auto1="matAutocomplete">
+                            <mat-option *ngFor="let metric of filteredTo | async" [value]="metric.name">
+                              <span>{{ metric.name }}</span>
+                            </mat-option>
+                          </mat-autocomplete>
+                    </div>
+                </div>
+
+                <input type="text" (ngModelChange) = "convert()" [ngModel]="input" name="input">
+            </form>
+      </div>
+    </div>
+
+    <div>
+      <h1>Answer: {{answer}}</h1>
+    </div>
+
+</div>
