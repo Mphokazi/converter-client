@@ -35,13 +35,14 @@
                     </div>
                 </div>
 
-                <input type="text" (ngModelChange) = "convert()" [ngModel]="input" name="input">
+                <input type="text" [formControl]="fromInput">
             </form>
       </div>
     </div>
 
     <div>
       <h1>Answer: {{answer}}</h1>
+      <button (click) = "convert()">Convert</button>
     </div>
 
 </div>

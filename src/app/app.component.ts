@@ -13,11 +13,10 @@ import 'rxjs/add/operator/map';
 export class AppComponent implements OnInit{
   fromCtrl: FormControl;
   toCtrl: FormControl;
-  input: number = 0.0;
+  fromInput: FormControl;
   filteredFrom: Observable<any[]>;
   filteredTo: Observable<any[]>;
   answer: any;
-
   toMetrics: any[]  = [];
 
   fromMetrics: any[] = [
@@ -26,20 +25,25 @@ export class AppComponent implements OnInit{
     { name: 'METERS'},
     { name: 'KILOMETERS'},
     { name: 'CENTIMETERS'},
-    { name: 'MILES'}
+    { name: 'KILOGRAMS'},
+    { name: 'GRAMS'}
   ];
 
   distanceMetrics: any[] = [
     { name: 'METERS'},
     { name: 'KILOMETERS'},
-    { name: 'CENTIMETERS'},
-    { name: 'MILES'}
+    { name: 'CENTIMETERS'}
   ];
 
   temperatureMetrics: any[] =  [
     { name: 'CELCIOUS'},
     { name: 'FARENHEIT'}
     
+  ];
+
+  weightMetric: any = [
+    { name: 'KILOGRAMS'},
+    { name: 'GRAMS'}
   ]
 
   constructor(private http: Http){}
@@ -55,6 +59,7 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(){
+    this.fromInput = new FormControl();
     this.fromCtrl = new FormControl();
     this.toCtrl = new FormControl();
     this.filteredFrom = this.onChange(this.fromCtrl, this.fromMetrics);
@@ -62,15 +67,26 @@ export class AppComponent implements OnInit{
   }
 
   filterTo(metric){
-    if(metric.name == 'CELCIOUS'){
-      this.stringify(metric)
-    }else{
-      if(metric.name == 'FARENHEIT'){
-        this.stringify(metric)
-      }else{
-      this.toMetrics = this.distanceMetrics;
-      this.filteredTo = this.onChange(this.toCtrl, this.toMetrics)
-      }
+
+    switch(metric.name){
+      case 'CELCIOUS':
+        this.toMetrics = [(this.stringify({name: 'FARENHEIT'}))];
+      break;
+      case 'FARENHEIT':
+        this.toMetrics = [(this.stringify({name: 'FARENHEIT'}))];
+      break;
+      case 'GRAMS':
+        this.toMetrics = [(this.stringify({name: 'KILOGRAMS'}))];
+      break;
+      case 'KILOGRAMS':
+        this.toMetrics = [(this.stringify({name: 'GRAMS'}))];
+      break;
+
+      default:
+        this.toMetrics = this.distanceMetrics;
+        this.filteredTo = this.onChange(this.toCtrl, this.toMetrics)
+      break;
+
     }
   }
 
@@ -87,9 +103,10 @@ export class AppComponent implements OnInit{
   }
 
   convert(){
-    return this.http.get("http://localhost:8080/api/convert?input="+this.input+"&unitName="+this.toCtrl.value)
+    return this.http.get("http://localhost:8080/api/convert?input="+this.fromInput.value+"&unitName="+this.toCtrl.value)
     .map(mapper => mapper.json())
     .subscribe(subscriber => {
+      console.log("Conveted value: "+ subscriber.content)
       this.answer = subscriber.content;
     });
   }
